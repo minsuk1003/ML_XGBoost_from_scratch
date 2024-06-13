@@ -11,7 +11,7 @@
 2) Random Subspace Algorithm : 기존 XGBoost 알고리즘에서 feature에 대한 비율을 직접 지정할 수 있지만, 랜덤 서브스페이스 알고리즘을 통해 각 개별 학습기의 다양성을 증가시켜 앙상블의 성능을 향상시키기 위함
 
 
-### Multi Label Classification, Regression
+### Multi-label Classification, Regression
 
 
 
