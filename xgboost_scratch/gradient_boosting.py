@@ -1,5 +1,3 @@
-## GradientBoostingRegressor Class 정의
-
 import numpy as np
 from .tree import DecisionTreeRegressor
 
@@ -7,7 +5,14 @@ class GradientBoostingRegressor:
     """
     Implements the Gradient Boosting Regressor using Friedman's method.
     """
-    def __init__(self, classification=False):
+    def __init__(self, depth=5, min_leaf=5, learning_rate=0.1, boosting_rounds=100, gamma=0, lambda_=1, colsample_bytree=1.0, n_jobs=1):
+        self.depth = depth
+        self.min_leaf = min_leaf
+        self.learning_rate = learning_rate
+        self.boosting_rounds = boosting_rounds
+        self.gamma = gamma
+        self.lambda_ = lambda_
+        self.colsample_bytree = colsample_bytree
         self.estimators = []
 
     @staticmethod
@@ -48,7 +53,7 @@ class GradientBoostingRegressor:
         """
         return 2 * (y - y_pred)
 
-    def fit(self, X, y, depth=5, min_leaf=5, learning_rate=0.1, boosting_rounds=5, gamma=0, lambda_=1, colsample_bytree=1.0):
+    def fit(self, X, y):
         """
         Fits the gradient boosting model to the data.
         
@@ -58,26 +63,15 @@ class GradientBoostingRegressor:
             The input features.
         y : pandas Series
             The target values.
-        depth : int, optional (default=5)
-            The maximum depth of each tree.
-        min_leaf : int, optional (default=5)
-            The minimum number of samples required to create a leaf node.
-        learning_rate : float, optional (default=0.1)
-            The learning rate for boosting.
-        boosting_rounds : int, optional (default=5)
-            The number of boosting rounds.
-        gamma : float, optional (default=0)
-            The regularization parameter for tree pruning.
-        lambda_ : float, optional (default=1)
-            The L2 regularization term on weights.
-        colsample_bytree : float, optional (default=1.0)
-            The subsample ratio of columns when constructing each tree.
         """
-        self.learning_rate = learning_rate
+        
         self.base_pred = np.full((X.shape[0], 1), np.mean(y)).flatten()
-        for booster in range(boosting_rounds):
+        self.y_mean = np.mean(y)
+        self.estimators = []
+
+        for booster in range(self.boosting_rounds):
             pseudo_residuals = self.negativeMeanSquaredErrorDerivitive(y, self.base_pred)
-            boosting_tree = DecisionTreeRegressor().fit(X, pseudo_residuals, depth=depth, min_leaf=min_leaf, gamma=gamma, lambda_=lambda_, colsample_bytree=colsample_bytree)
+            boosting_tree = DecisionTreeRegressor().fit(X, pseudo_residuals, depth=self.depth, min_leaf=self.min_leaf, gamma=self.gamma, lambda_=self.lambda_, colsample_bytree=self.colsample_bytree)
             self.base_pred += self.learning_rate * boosting_tree.predict(X)
             self.estimators.append(boosting_tree)
 
@@ -95,7 +89,8 @@ class GradientBoostingRegressor:
         numpy array
             The predicted values.
         """
+        X = X.values
         pred = np.zeros(X.shape[0])
         for estimator in self.estimators:
             pred += self.learning_rate * estimator.predict(X)
-        return np.full((X.shape[0], 1), np.mean(y)).flatten() + pred
+        return np.full((X.shape[0], 1), self.y_mean).flatten() + pred

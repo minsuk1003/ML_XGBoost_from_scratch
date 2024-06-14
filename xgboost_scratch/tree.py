@@ -1,5 +1,5 @@
 ## DecisionTreeRegressor 정의
-
+import numpy as np
 from .node import Node
 
 class DecisionTreeRegressor:
@@ -49,4 +49,4 @@ class DecisionTreeRegressor:
         numpy array
             The predicted values.
         """
-        return self.dtree.predict(X.values)
+        return self.dtree.predict(X)

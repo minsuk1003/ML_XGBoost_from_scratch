@@ -64,7 +64,7 @@ class Node:
         var_idx : int
             The index of the feature to split on.
         """
-        x = self.x.values[self.idxs, var_idx]
+        x = self.x[self.idxs, var_idx]
         for r in range(self.row_count):
             lhs = x <= x[r]
             rhs = x > x[r]
@@ -123,7 +123,7 @@ class Node:
     @property
     def split_col(self):
         """ Returns the column values of the feature to split on. """
-        return self.x.values[self.idxs, self.var_idx]
+        return self.x[self.idxs, self.var_idx]
 
     @property
     def is_leaf(self):
@@ -146,7 +146,7 @@ class Node:
         """
         return np.array([self.predict_row(xi) for xi in x])
 
-    def xpredict_row(self, xi):
+    def predict_row(self, xi):
         """
         Predicts the target value for a single data point.
         
