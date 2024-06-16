@@ -27,7 +27,7 @@ class Node:
     colsample_bytree : float, optional (default=1.0)
         The subsample ratio of columns when constructing each tree.
     """
-    def __init__(self, x, y, idxs, min_leaf=5, depth=10, gamma=0, lambda_=1, colsample_bytree=1.0):
+    def __init__(self, x, y, idxs, min_leaf=5, depth=10, gamma=0, lambda_=1, alpha=0, colsample_bytree=1.0):
         self.x, self.y = x, y
         self.idxs = idxs
         self.depth = depth
@@ -38,6 +38,7 @@ class Node:
         self.score = float('-inf')
         self.gamma = gamma
         self.lambda_ = lambda_
+        self.alpha = alpha
         self.colsample_bytree = colsample_bytree
         self.selected_cols = random.sample(range(self.col_count), int(self.col_count * self.colsample_bytree))
         self.find_varsplit()
@@ -68,8 +69,6 @@ class Node:
         for r in range(self.row_count):
             lhs = x <= x[r]
             rhs = x > x[r]
-            lhs_indices = np.nonzero(x <= x[r])[0]
-            rhs_indices = np.nonzero(x > x[r])[0]
             if(rhs.sum() < self.min_leaf or lhs.sum() < self.min_leaf): continue
             curr_score = self.gain(lhs, rhs)
             if curr_score > self.score:

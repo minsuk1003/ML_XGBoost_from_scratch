@@ -32,7 +32,7 @@ def evaluate_model(model, X_train, y_train, X_test, y_test, model_name):
 
 # 모델 목록과 이름
 models = [
-    (GradientBoostingRegressor(depth=5, min_leaf=5, learning_rate=0.1, boosting_rounds=100), "XGBoost from Scratch"),
+    (GradientBoostingRegressor(depth=5, min_leaf=5, learning_rate=0.1, boosting_rounds=5, n_jobs=-1, subsample=0.5), "XGBoost from Scratch"),
     (DecisionTreeRegressor(random_state=42), "Decision Tree"),
     (RandomForestRegressor(random_state=42), "Random Forest"),
     (SklearnGradientBoostingRegressor(random_state=42), "Gradient Boosting (scikit-learn)")
